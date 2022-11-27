@@ -46,11 +46,14 @@ namespace PASS2
         const int END = 4;
         
         //Declare textures
+        Texture2D bgImg;
         Texture2D easyBtnImg;
         Texture2D scoresBtnImg;
         Texture2D exitBtnImg;
         
+        
         //Declare rectangles
+        Rectangle bgRec;
         Rectangle easyBtnRec;
         Rectangle scoresBtnRec;
         Rectangle exitBtnRec;
@@ -83,7 +86,11 @@ namespace PASS2
             scoresBtnImg = Content.Load<Texture2D>("Sprites/BtnHighscores");
             exitBtnImg = Content.Load<Texture2D>("Sprites/BtnExit");
             
+            //Load in the background
+            bgImg = Content.Load<Texture2D>("Backgrounds/CircusBG");
+            
             //Set rectangle positions
+            bgRec = new Rectangle(0, 0, screenWidth, screenHeight);
             easyBtnRec = new Rectangle(((screenWidth / 2) - (easyBtnImg.Width / 2)), 100, easyBtnImg.Width, easyBtnImg.Height);
             scoresBtnRec = new Rectangle(((screenWidth / 2) - (scoresBtnImg.Width / 2)), 175, scoresBtnImg.Width, scoresBtnImg.Height);
             exitBtnRec = new Rectangle(((screenWidth / 2) - (exitBtnImg.Width / 2)), 250, exitBtnImg.Width, exitBtnImg.Height);
@@ -118,18 +125,29 @@ namespace PASS2
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 //Exit();
 
             // TODO: Add your update logic here
 
+            //Update your mouse position
+            mouse = Mouse.GetState();
+            
             switch (gamestate)
             {
+                
                 case MENU:
                     //Check if user is pressing the exit button and close the game
                     if(exitBtnRec.Contains(mouse.Position) && mouse.LeftButton == ButtonState.Pressed)
                         Exit();
                     
+                    //Check if user is pressing the easy button and start the game in easy mode (by switching the gamestate)
+                    if(easyBtnRec.Contains(mouse.Position) && mouse.LeftButton == ButtonState.Pressed)
+                        gamestate = GAME;
+                    
+                    //Check if user is pressing the score button and open the high score page (by switching the gamestate)
+                    if(easyBtnRec.Contains(mouse.Position) && mouse.LeftButton == ButtonState.Pressed)
+                        gamestate = SCORES;
                     break;
             }
             base.Update(gameTime);
@@ -149,9 +167,13 @@ namespace PASS2
             switch (gamestate)
             {
                 case MENU:
+                    spriteBatch.Draw(bgImg, bgRec, Color.White);
                     spriteBatch.Draw(easyBtnImg, easyBtnRec, Color.White);
                     spriteBatch.Draw(scoresBtnImg, scoresBtnRec, Color.White);
                     spriteBatch.Draw(exitBtnImg, exitBtnRec, Color.White);
+                    break;
+                case GAME:
+                    spriteBatch.Draw(bgImg, easyBtnRec, Color.White);
                     break;
             }
             spriteBatch.End();
