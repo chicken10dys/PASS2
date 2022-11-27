@@ -1,0 +1,27 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"D:/PASS2/PASS2/Content/Backgrounds/CircusBG.png","D:/PASS2/PASS2/bin/Content/Backgrounds/CircusBG.xnb","TextureProcessor","Texture2DContent",1246676,3840085,0.3356601
+"D:/PASS2/PASS2/Content/Backgrounds/EndGameBG.jpg","D:/PASS2/PASS2/bin/Content/Backgrounds/EndGameBG.xnb","TextureProcessor","Texture2DContent",70187,864085,5.366709
+"D:/PASS2/PASS2/Content/Backgrounds/HighScoreBG.jpg","D:/PASS2/PASS2/bin/Content/Backgrounds/HighScoreBG.xnb","TextureProcessor","Texture2DContent",45133,1090645,2.229758
+"D:/PASS2/PASS2/Content/Backgrounds/MenuBG.png","D:/PASS2/PASS2/bin/Content/Backgrounds/MenuBG.xnb","TextureProcessor","Texture2DContent",615713,7840085,2.033024
+"D:/PASS2/PASS2/Content/Sprites/ball.png","D:/PASS2/PASS2/bin/Content/Sprites/ball.xnb","TextureProcessor","Texture2DContent",47122,262229,0.0624681
+"D:/PASS2/PASS2/Content/Sprites/Blank.png","D:/PASS2/PASS2/bin/Content/Sprites/Blank.xnb","TextureProcessor","Texture2DContent",2807,89,0.0156387
+"D:/PASS2/PASS2/Content/Sprites/BlueBucket.png","D:/PASS2/PASS2/bin/Content/Sprites/BlueBucket.xnb","TextureProcessor","Texture2DContent",7314,9301,0.0312377
+"D:/PASS2/PASS2/Content/Sprites/BtnEasy.png","D:/PASS2/PASS2/bin/Content/Sprites/BtnEasy.xnb","TextureProcessor","Texture2DContent",6456,35293,0.0312499
+"D:/PASS2/PASS2/Content/Sprites/BtnExit.png","D:/PASS2/PASS2/bin/Content/Sprites/BtnExit.xnb","TextureProcessor","Texture2DContent",4242,19093,0.0156253
+"D:/PASS2/PASS2/Content/Sprites/BtnHard.png","D:/PASS2/PASS2/bin/Content/Sprites/BtnHard.xnb","TextureProcessor","Texture2DContent",6239,35941,0.0312472
+"D:/PASS2/PASS2/Content/Sprites/BtnHighscores.png","D:/PASS2/PASS2/bin/Content/Sprites/BtnHighscores.xnb","TextureProcessor","Texture2DContent",7008,38101,0.0312523
+"D:/PASS2/PASS2/Content/Sprites/BtnMenu.png","D:/PASS2/PASS2/bin/Content/Sprites/BtnMenu.xnb","TextureProcessor","Texture2DContent",6581,38317,0.0156255
+"D:/PASS2/PASS2/Content/Sprites/BtnResume.png","D:/PASS2/PASS2/bin/Content/Sprites/BtnResume.xnb","TextureProcessor","Texture2DContent",5555,28813,0.0312492
+"D:/PASS2/PASS2/Content/Sprites/GreenBucket.png","D:/PASS2/PASS2/bin/Content/Sprites/GreenBucket.xnb","TextureProcessor","Texture2DContent",16273,36949,0.0312494
+"D:/PASS2/PASS2/Content/Sprites/NoWind.png","D:/PASS2/PASS2/bin/Content/Sprites/NoWind.xnb","TextureProcessor","Texture2DContent",4153,3685,0.0312508
+"D:/PASS2/PASS2/Content/Sprites/PowerArrow.png","D:/PASS2/PASS2/bin/Content/Sprites/PowerArrow.xnb","TextureProcessor","Texture2DContent",4163,3685,0.0156233
+"D:/PASS2/PASS2/Content/Sprites/PowerMeter.png","D:/PASS2/PASS2/bin/Content/Sprites/PowerMeter.xnb","TextureProcessor","Texture2DContent",3383,27093,0.0649153
+"D:/PASS2/PASS2/Content/Sprites/RedBucket.png","D:/PASS2/PASS2/bin/Content/Sprites/RedBucket.xnb","TextureProcessor","Texture2DContent",23352,65621,0.0312515
+"D:/PASS2/PASS2/Content/Sprites/Splash.png","D:/PASS2/PASS2/bin/Content/Sprites/Splash.xnb","TextureProcessor","Texture2DContent",346284,6012085,0.3281246
+"D:/PASS2/PASS2/Content/Sprites/TrajectoryArrow.png","D:/PASS2/PASS2/bin/Content/Sprites/TrajectoryArrow.xnb","TextureProcessor","Texture2DContent",13999,326485,0.0625038
+"D:/PASS2/PASS2/Content/Sprites/TrajectoryArrow2.png","D:/PASS2/PASS2/bin/Content/Sprites/TrajectoryArrow2.xnb","TextureProcessor","Texture2DContent",11874,326485,0.2355022
+"D:/PASS2/PASS2/Content/Sprites/TrajectoryArrow3.png","D:/PASS2/PASS2/bin/Content/Sprites/TrajectoryArrow3.xnb","TextureProcessor","Texture2DContent",4230,7285,0.0155945
+"D:/PASS2/PASS2/Content/Sprites/TrajectoryArrow4.png","D:/PASS2/PASS2/bin/Content/Sprites/TrajectoryArrow4.xnb","TextureProcessor","Texture2DContent",4016,14485,0.031248
+"D:/PASS2/PASS2/Content/Sprites/TrajectoryArrow5.png","D:/PASS2/PASS2/bin/Content/Sprites/TrajectoryArrow5.xnb","TextureProcessor","Texture2DContent",4273,14485,0.0312502
+"D:/PASS2/PASS2/Content/Sprites/WindArrowLeft.png","D:/PASS2/PASS2/bin/Content/Sprites/WindArrowLeft.xnb","TextureProcessor","Texture2DContent",5594,8605,0.0312496
+"D:/PASS2/PASS2/Content/Sprites/WindArrowRight.png","D:/PASS2/PASS2/bin/Content/Sprites/WindArrowRight.xnb","TextureProcessor","Texture2DContent",5739,8605,0.0312816
