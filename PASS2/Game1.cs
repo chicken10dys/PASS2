@@ -28,8 +28,10 @@ namespace PASS2
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         
-        //Get mousestate
+        //Get mouse and keyboard state
         MouseState mouse;
+        KeyboardState kb;
+        KeyboardState prevKb;
         
         //Store window size
         int screenWidth;
@@ -50,6 +52,7 @@ namespace PASS2
         Texture2D easyBtnImg;
         Texture2D scoresBtnImg;
         Texture2D exitBtnImg;
+        Texture2D menuBtnImg;
         
         
         //Declare rectangles
@@ -57,6 +60,7 @@ namespace PASS2
         Rectangle easyBtnRec;
         Rectangle scoresBtnRec;
         Rectangle exitBtnRec;
+        Rectangle menuBtnRec;
         
         public Game1()
         {
@@ -85,6 +89,7 @@ namespace PASS2
             easyBtnImg = Content.Load<Texture2D>("Sprites/BtnEasy");
             scoresBtnImg = Content.Load<Texture2D>("Sprites/BtnHighscores");
             exitBtnImg = Content.Load<Texture2D>("Sprites/BtnExit");
+            menuBtnImg = Content.Load<Texture2D>("Sprites/BtnMenu");
             
             //Load in the background
             bgImg = Content.Load<Texture2D>("Backgrounds/CircusBG");
@@ -94,6 +99,7 @@ namespace PASS2
             easyBtnRec = new Rectangle(((screenWidth / 2) - (easyBtnImg.Width / 2)), 100, easyBtnImg.Width, easyBtnImg.Height);
             scoresBtnRec = new Rectangle(((screenWidth / 2) - (scoresBtnImg.Width / 2)), 175, scoresBtnImg.Width, scoresBtnImg.Height);
             exitBtnRec = new Rectangle(((screenWidth / 2) - (exitBtnImg.Width / 2)), 250, exitBtnImg.Width, exitBtnImg.Height);
+            menuBtnRec =  new Rectangle(0, 0, menuBtnImg.Width, menuBtnImg.Height);
             base.Initialize();
         }
 
@@ -130,8 +136,10 @@ namespace PASS2
 
             // TODO: Add your update logic here
 
-            //Update your mouse position
+            //Update your keyboard and mouse position
             mouse = Mouse.GetState();
+            prevKb = kb;
+            kb = Keyboard.GetState();
             
             switch (gamestate)
             {
@@ -146,8 +154,26 @@ namespace PASS2
                         gamestate = GAME;
                     
                     //Check if user is pressing the score button and open the high score page (by switching the gamestate)
-                    if(easyBtnRec.Contains(mouse.Position) && mouse.LeftButton == ButtonState.Pressed)
+                    if(scoresBtnRec.Contains(mouse.Position) && mouse.LeftButton == ButtonState.Pressed)
                         gamestate = SCORES;
+                    break;
+                
+                case GAME:
+                    //Check if user is pressing the pause button
+                    if(kb.IsKeyDown(Keys.Escape) && kb != prevKb)
+                        gamestate = PAUSE;
+                    break;
+                
+                case PAUSE:
+                    //Check if user is pressing the pause button
+                    if(kb.IsKeyDown(Keys.Escape) && kb != prevKb)
+                        gamestate = GAME;
+                    break;
+                
+                case SCORES:
+                    //Check if user is pressing the menu button
+                    if(menuBtnRec.Contains(mouse.Position) && mouse.LeftButton == ButtonState.Pressed)
+                        gamestate = MENU;
                     break;
             }
             base.Update(gameTime);
@@ -164,16 +190,24 @@ namespace PASS2
             // TODO: Add your drawing code here
             //Draw required objects based on the gamestate
             spriteBatch.Begin();
+            
+            if (gamestate == 2)
+                spriteBatch.Draw(bgImg, bgRec, Color.White);
+            
             switch (gamestate)
             {
                 case MENU:
-                    spriteBatch.Draw(bgImg, bgRec, Color.White);
                     spriteBatch.Draw(easyBtnImg, easyBtnRec, Color.White);
                     spriteBatch.Draw(scoresBtnImg, scoresBtnRec, Color.White);
                     spriteBatch.Draw(exitBtnImg, exitBtnRec, Color.White);
                     break;
+                
                 case GAME:
-                    spriteBatch.Draw(bgImg, easyBtnRec, Color.White);
+                    spriteBatch.Draw(bgImg, bgRec, Color.White);
+                    break;
+                
+                case SCORES:
+                    spriteBatch.Draw(menuBtnImg, menuBtnRec, Color.White);
                     break;
             }
             spriteBatch.End();
