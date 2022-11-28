@@ -67,8 +67,11 @@ namespace PASS2
         
         //Game assets
         Texture2D ballImg;
+        Texture2D blueBucketImg;
+        Texture2D greenBucketImg;
+        Texture2D redBucketImg;
 
-        //Declare rectangles
+            //Declare rectangles
         //Ui
         Rectangle bgRec;
         Rectangle easyBtnRec;
@@ -79,9 +82,11 @@ namespace PASS2
         Rectangle angleMeterRec;
         Rectangle angleMeterFillRec;
         
-        
         //Game assets
         Rectangle ballRec;
+        Rectangle blueBucketRec;
+        Rectangle greenBucketRec;
+        Rectangle redBucketRec;
 
         public Game1()
         {
@@ -116,8 +121,12 @@ namespace PASS2
             blankImg = Content.Load<Texture2D>("Sprites/Blank");
             meterImg = Content.Load<Texture2D>("Sprites/PowerMeter");
             
+            
             //Game assets
             ballImg = Content.Load<Texture2D>("Sprites/ball");
+            blueBucketImg = Content.Load<Texture2D>("Sprites/BlueBucket");
+            greenBucketImg = Content.Load<Texture2D>("Sprites/GreenBucket");
+            redBucketImg = Content.Load<Texture2D>("Sprites/RedBucket");
             
             //Load in the background
             bgImg = Content.Load<Texture2D>("Backgrounds/CircusBG");
@@ -135,6 +144,9 @@ namespace PASS2
             
             //Game assets
             ballRec = new Rectangle(0, (screenHeight - 16), 16, 16);
+            blueBucketRec = new Rectangle((screenWidth - 100), (screenHeight - blueBucketImg.Height), blueBucketImg.Width, blueBucketImg.Height);
+            greenBucketRec = new Rectangle((screenWidth - 200), (screenHeight - 64), 64, 64);
+            redBucketRec = new Rectangle((screenWidth - 350), (screenHeight - 96), 96, 96);
             
             base.Initialize();
         }
@@ -262,6 +274,9 @@ namespace PASS2
                     spriteBatch.Draw(ballImg, ballRec, Color.White);
                     spriteBatch.Draw(blankImg, angleMeterFillRec, Color.Red);
                     spriteBatch.Draw(meterImg, angleMeterRec, Color.White);
+                    spriteBatch.Draw(blueBucketImg, blueBucketRec, Color.White);
+                    spriteBatch.Draw(greenBucketImg, greenBucketRec, Color.White);
+                    spriteBatch.Draw(redBucketImg, redBucketRec, Color.White);
                     break;
                 
                 case SCORES:
