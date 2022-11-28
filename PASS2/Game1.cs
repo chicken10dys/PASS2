@@ -413,9 +413,9 @@ namespace PASS2
                     spriteBatch.Draw(greenBucketImg, greenBucketRec, Color.White);
                     spriteBatch.Draw(redBucketImg, redBucketRec, Color.White);
                     
-                    spriteBatch.Draw(blankImg, redBucketInRec, Color.Magenta);
-                    spriteBatch.Draw(blankImg, greenBucketInRec, Color.Magenta);
-                    spriteBatch.Draw(blankImg, blueBucketInRec, Color.Magenta);
+                    //spriteBatch.Draw(blankImg, redBucketInRec, Color.Magenta);
+                    //spriteBatch.Draw(blankImg, greenBucketInRec, Color.Magenta);
+                    //spriteBatch.Draw(blankImg, blueBucketInRec, Color.Magenta);
                     break;
                 
                 case SCORES:
