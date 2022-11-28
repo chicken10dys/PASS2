@@ -113,6 +113,12 @@ namespace PASS2
         double xSpeed;
         double ySpeed;
         
+        //Store points
+        int points;
+        
+        //Store balls
+        int balls;
+        
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -174,9 +180,9 @@ namespace PASS2
             blueBucketRec = new Rectangle((screenWidth - 100), (screenHeight - blueBucketImg.Height), blueBucketImg.Width, blueBucketImg.Height);
             greenBucketRec = new Rectangle((screenWidth - 200), (screenHeight - 64), 64, 64);
             redBucketRec = new Rectangle((screenWidth - 350), (screenHeight - 96), 96, 96);
-            blueBucketInRec = new Rectangle((blueBucketRec.X + 10), (blueBucketRec.Y + 10), 30, 10);
-            greenBucketInRec = new Rectangle((greenBucketRec.X + 10), (greenBucketRec.Y + 20), 45, 10);
-            redBucketInRec = new Rectangle((redBucketRec.X + 15), (redBucketRec.Y + 20), 70, 10);
+            blueBucketInRec = new Rectangle((blueBucketRec.X + 10), (blueBucketRec.Y + 10), 30, 30);
+            greenBucketInRec = new Rectangle((greenBucketRec.X + 10), (greenBucketRec.Y + 20), 45, 40);
+            redBucketInRec = new Rectangle((redBucketRec.X + 15), (redBucketRec.Y + 20), 70, 50);
             
             base.Initialize();
         }
@@ -302,8 +308,53 @@ namespace PASS2
                         if (ballRec.Right > bgRec.Right || ballRec.Left < bgRec.Left || ballRec.Intersects(redBucketRec) || ballRec.Intersects(greenBucketRec) || ballRec.Intersects(blueBucketRec))
                             xSpeed = xSpeed * -1;
                     
-                        if (ballRec.Top < bgRec.Top || ballRec.Bottom > bgRec.Bottom)
+                        if (ballRec.Top < bgRec.Top)
                             ySpeed = ySpeed * -1;
+                        if (ballRec.Bottom > bgRec.Bottom)
+                        {
+                            ballMoving = false;
+                            ballPos.X = 0;
+                            ballPos.Y = (screenHeight - 16);
+                            ballRec.X = (int)ballPos.X;
+                            ballRec.Y = (int)ballPos.Y;
+                            angle = 10;
+                            speed = 5;
+                        }
+                        
+                        //Check if ball landed and add points
+                        if (blueBucketInRec.Contains(ballRec))
+                        {
+                            ballMoving = false;
+                            ballPos.X = 0;
+                            ballPos.Y = (screenHeight - 16);
+                            ballRec.X = (int)ballPos.X;
+                            ballRec.Y = (int)ballPos.Y;
+                            points += 400;
+                            angle = 10;
+                            speed = 5;
+                        }
+                        else if (greenBucketInRec.Contains(ballRec))
+                        {
+                            ballMoving = false;
+                            ballPos.X = 0;
+                            ballPos.Y = (screenHeight - 16);
+                            ballRec.X = (int)ballPos.X;
+                            ballRec.Y = (int)ballPos.Y;
+                            points += 200;
+                            angle = 10;
+                            speed = 5;
+                        }
+                        else if (redBucketInRec.Contains(ballRec))
+                        {
+                            ballMoving = false;
+                            ballPos.X = 0;
+                            ballPos.Y = (screenHeight - 16);
+                            ballRec.X = (int)ballPos.X;
+                            ballRec.Y = (int)ballPos.Y;
+                            points += 100;
+                            angle = 10;
+                            speed = 5;
+                        }
                     }
                     //Set ball position
                     
@@ -352,7 +403,7 @@ namespace PASS2
                 
                 case GAME:
                     spriteBatch.Draw(bgImg, bgRec, Color.White);
-                    Console.WriteLine(ballRec.X + ", " + ballRec.Y + "angle: " + angle);
+                    Console.WriteLine(ballRec.X + ", " + ballRec.Y + "angle: " + angle + " " + ballMoving + " Points: " + points);
                     spriteBatch.Draw(ballImg, ballRec, Color.White);
                     spriteBatch.Draw(blankImg, angleMeterFillRec, Color.Red);
                     spriteBatch.Draw(meterImg, angleMeterRec, Color.White);
