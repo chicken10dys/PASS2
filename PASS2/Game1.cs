@@ -47,7 +47,14 @@ namespace PASS2
         const int PAUSE = 3;
         const int END = 4;
         
+        //Store angle
+        int angle = 10;
+        
+        //Store how filled the angle meter should be
+        int angleMeterFill = 0;
+        
         //Declare textures
+        //Ui
         Texture2D bgImg;
         Texture2D menuBg; 
         Texture2D easyBtnImg;
@@ -56,16 +63,26 @@ namespace PASS2
         Texture2D menuBtnImg;
         Texture2D resumeBtnImg;
         Texture2D blankImg;
+        Texture2D meterImg;
         
-        
+        //Game assets
+        Texture2D ballImg;
+
         //Declare rectangles
+        //Ui
         Rectangle bgRec;
         Rectangle easyBtnRec;
         Rectangle scoresBtnRec;
         Rectangle exitBtnRec;
         Rectangle resumeBtnRec;
         Rectangle menuBtnRec;
+        Rectangle angleMeterRec;
+        Rectangle angleMeterFillRec;
         
+        
+        //Game assets
+        Rectangle ballRec;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -90,22 +107,35 @@ namespace PASS2
             screenHeight = graphics.GraphicsDevice.Viewport.Height;
             
             //Load in sprites
+            //Ui
             easyBtnImg = Content.Load<Texture2D>("Sprites/BtnEasy");
             scoresBtnImg = Content.Load<Texture2D>("Sprites/BtnHighscores");
             exitBtnImg = Content.Load<Texture2D>("Sprites/BtnExit");
             resumeBtnImg = Content.Load<Texture2D>("Sprites/BtnResume");
             menuBtnImg = Content.Load<Texture2D>("Sprites/BtnMenu");
+            blankImg = Content.Load<Texture2D>("Sprites/Blank");
+            meterImg = Content.Load<Texture2D>("Sprites/PowerMeter");
+            
+            //Game assets
+            ballImg = Content.Load<Texture2D>("Sprites/ball");
             
             //Load in the background
             bgImg = Content.Load<Texture2D>("Backgrounds/CircusBG");
             
             //Set rectangle positions
+            //Ui
             bgRec = new Rectangle(0, 0, screenWidth, screenHeight);
             easyBtnRec = new Rectangle(((screenWidth / 2) - (easyBtnImg.Width / 2)), 100, easyBtnImg.Width, easyBtnImg.Height);
             scoresBtnRec = new Rectangle(((screenWidth / 2) - (scoresBtnImg.Width / 2)), 175, scoresBtnImg.Width, scoresBtnImg.Height);
             exitBtnRec = new Rectangle(((screenWidth / 2) - (exitBtnImg.Width / 2)), 250, exitBtnImg.Width, exitBtnImg.Height);
             menuBtnRec =  new Rectangle(0, 0, menuBtnImg.Width, menuBtnImg.Height);
             resumeBtnRec = new Rectangle(((screenWidth / 2) - (resumeBtnImg.Width / 2)), ((screenHeight / 2) - (resumeBtnImg.Height / 2)), resumeBtnImg.Width, resumeBtnImg.Height);
+            
+            angleMeterRec = new Rectangle(0, 0, meterImg.Width, meterImg.Height);
+            
+            //Game assets
+            ballRec = new Rectangle(0, (screenHeight - 16), 16, 16);
+            
             base.Initialize();
         }
 
@@ -168,6 +198,22 @@ namespace PASS2
                     //Check if user is pressing the pause button
                     if(kb.IsKeyDown(Keys.Escape) && kb != prevKb)
                         gamestate = PAUSE;
+                    
+                    //Add logic to change angle
+                    if (kb.IsKeyDown(Keys.Up))
+                        angle += 2;
+                    if (kb.IsKeyDown(Keys.Down))
+                        angle -= 2;
+                    
+                    //Make sure angle is always between 10 and 90
+                    if (angle < 10)
+                        angle = 10;
+                    if (angle > 90)
+                        angle = 90;
+                    
+                    //Calculate angle meter fill and fill the meter
+                    angleMeterFill = Convert.ToInt32((angle - 10) * 2.6);
+                    angleMeterFillRec = new Rectangle(meterImg.Width, meterImg.Height, (meterImg.Width * -1), (angleMeterFill * -1));
                     break;
                 
                 case PAUSE:
@@ -213,6 +259,9 @@ namespace PASS2
                 
                 case GAME:
                     spriteBatch.Draw(bgImg, bgRec, Color.White);
+                    spriteBatch.Draw(ballImg, ballRec, Color.White);
+                    spriteBatch.Draw(blankImg, angleMeterFillRec, Color.Red);
+                    spriteBatch.Draw(meterImg, angleMeterRec, Color.White);
                     break;
                 
                 case SCORES:
