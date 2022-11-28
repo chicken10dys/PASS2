@@ -284,7 +284,7 @@ namespace PASS2
                         ySpeed = - speed * Math.Sin(angle * (Math.PI/180.0));
                         
                     }
-                    
+                     
                     //Calculate ball movement
                     if (ballMoving == true)
                     {
