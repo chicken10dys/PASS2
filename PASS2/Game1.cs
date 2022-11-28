@@ -46,12 +46,22 @@ namespace PASS2
         const int GAME = 2;
         const int PAUSE = 3;
         const int END = 4;
+     
+        //Gravity const
+        const double GRAVITY = 9.81/60;
         
         //Store angle
         int angle = 10;
         
-        //Store how filled the angle meter should be
+        //Store the speed
+        float speed = 5f;
+        
+        //Store how filled the meters should be
         int angleMeterFill = 0;
+        int speedMeterFill = 0;
+        
+        //Store if ball is launched
+        bool ballMoving = false;
         
         //Declare textures
         //Ui
@@ -81,13 +91,28 @@ namespace PASS2
         Rectangle menuBtnRec;
         Rectangle angleMeterRec;
         Rectangle angleMeterFillRec;
-        
+        Rectangle speedMeterRec;
+        Rectangle speedMeterFillRec;
+
         //Game assets
         Rectangle ballRec;
         Rectangle blueBucketRec;
         Rectangle greenBucketRec;
         Rectangle redBucketRec;
-
+        Rectangle blueBucketInRec;
+        Rectangle greenBucketInRec;
+        Rectangle redBucketInRec;
+        
+        //Set the ball position for movement
+        Vector2 ballPos;
+        
+        int dirX = 0;       //Stores the x direction, which will be one of 1(right), -1(left) or 0(stopped)
+        int dirY = 0;      //Stores the y direction, which will be one of 1(down), -1(up) or 0(stopped)
+        
+        //Store x and y speeds
+        double xSpeed;
+        double ySpeed;
+        
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -141,12 +166,17 @@ namespace PASS2
             resumeBtnRec = new Rectangle(((screenWidth / 2) - (resumeBtnImg.Width / 2)), ((screenHeight / 2) - (resumeBtnImg.Height / 2)), resumeBtnImg.Width, resumeBtnImg.Height);
             
             angleMeterRec = new Rectangle(0, 0, meterImg.Width, meterImg.Height);
+            speedMeterRec = new Rectangle(meterImg.Width, 0, meterImg.Width, meterImg.Height);
             
             //Game assets
+            ballPos = new Vector2(0, (screenHeight - 16));
             ballRec = new Rectangle(0, (screenHeight - 16), 16, 16);
             blueBucketRec = new Rectangle((screenWidth - 100), (screenHeight - blueBucketImg.Height), blueBucketImg.Width, blueBucketImg.Height);
             greenBucketRec = new Rectangle((screenWidth - 200), (screenHeight - 64), 64, 64);
             redBucketRec = new Rectangle((screenWidth - 350), (screenHeight - 96), 96, 96);
+            blueBucketInRec = new Rectangle((blueBucketRec.X + 10), (blueBucketRec.Y + 10), 30, 10);
+            greenBucketInRec = new Rectangle((greenBucketRec.X + 10), (greenBucketRec.Y + 20), 45, 10);
+            redBucketInRec = new Rectangle((redBucketRec.X + 15), (redBucketRec.Y + 20), 70, 10);
             
             base.Initialize();
         }
@@ -217,15 +247,66 @@ namespace PASS2
                     if (kb.IsKeyDown(Keys.Down))
                         angle -= 2;
                     
+                    //Add logic to change speed
+                    if (kb.IsKeyDown(Keys.Right))
+                        speed += 0.3f;
+                    if (kb.IsKeyDown(Keys.Left))
+                        speed -= 0.3f;
+                    
                     //Make sure angle is always between 10 and 90
                     if (angle < 10)
                         angle = 10;
                     if (angle > 90)
                         angle = 90;
                     
+                    //Make sure speed is always between 5 and 20
+                    if (speed < 5)
+                        speed = 5;
+                    if (speed > 20)
+                        speed = 20;
+                    
                     //Calculate angle meter fill and fill the meter
                     angleMeterFill = Convert.ToInt32((angle - 10) * 2.6);
                     angleMeterFillRec = new Rectangle(meterImg.Width, meterImg.Height, (meterImg.Width * -1), (angleMeterFill * -1));
+                    
+                    //Calculate speed meter fill and fill the meter
+                    speedMeterFill = Convert.ToInt32((speed - 5) * (meterImg.Height / 15));
+                    speedMeterFillRec = new Rectangle((meterImg.Width * 2), meterImg.Height, (meterImg.Width * -1), (speedMeterFill * -1));
+                    
+                    //Launch ball
+                    if (kb.IsKeyDown(Keys.Space) && kb != prevKb && ballMoving == false)
+                    {
+                        ballMoving = true;
+                        /*dirX = (1);
+                        dirY = (angle / 10) * -1;*/
+                        
+                        xSpeed = speed * Math.Cos(angle * (Math.PI/180.0));
+                        ySpeed = - speed * Math.Sin(angle * (Math.PI/180.0));
+                        
+                    }
+                    
+                    //Calculate ball movement
+                    if (ballMoving == true)
+                    {
+                        //Calculate gravity and move the ball
+                        /*ballPos.X = ballPos.X + (dirX * speed);
+                        ballPos.Y = ballPos.Y + (dirY * speed);*/
+                        
+                        ySpeed = ySpeed + GRAVITY;
+                        ballPos.X = (float)(ballPos.X + xSpeed);
+                        ballPos.Y = (float)(ballPos.Y + ySpeed);
+                        ballRec.X = (int)ballPos.X;
+                        ballRec.Y = (int)ballPos.Y;
+                        
+                        //Bounce ball
+                        if (ballRec.Right > bgRec.Right || ballRec.Left < bgRec.Left || ballRec.Intersects(redBucketRec) || ballRec.Intersects(greenBucketRec) || ballRec.Intersects(blueBucketRec))
+                            xSpeed = xSpeed * -1;
+                    
+                        if (ballRec.Top < bgRec.Top || ballRec.Bottom > bgRec.Bottom)
+                            ySpeed = ySpeed * -1;
+                    }
+                    //Set ball position
+                    
                     break;
                 
                 case PAUSE:
@@ -271,12 +352,19 @@ namespace PASS2
                 
                 case GAME:
                     spriteBatch.Draw(bgImg, bgRec, Color.White);
+                    Console.WriteLine(ballRec.X + ", " + ballRec.Y + "angle: " + angle);
                     spriteBatch.Draw(ballImg, ballRec, Color.White);
                     spriteBatch.Draw(blankImg, angleMeterFillRec, Color.Red);
                     spriteBatch.Draw(meterImg, angleMeterRec, Color.White);
+                    spriteBatch.Draw(blankImg, speedMeterFillRec, Color.Green);
+                    spriteBatch.Draw(meterImg, speedMeterRec, Color.White);
                     spriteBatch.Draw(blueBucketImg, blueBucketRec, Color.White);
                     spriteBatch.Draw(greenBucketImg, greenBucketRec, Color.White);
                     spriteBatch.Draw(redBucketImg, redBucketRec, Color.White);
+                    
+                    spriteBatch.Draw(blankImg, redBucketInRec, Color.Magenta);
+                    spriteBatch.Draw(blankImg, greenBucketInRec, Color.Magenta);
+                    spriteBatch.Draw(blankImg, blueBucketInRec, Color.Magenta);
                     break;
                 
                 case SCORES:
