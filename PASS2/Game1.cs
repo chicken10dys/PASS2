@@ -1,8 +1,8 @@
-﻿//Author: Ashton Gon
+﻿//Author: ...
 //File Name: Game1.cs
 //Project Name: PASS2
 //Creation Date: November 24, 2022
-//Modified Date: November 25, 2022
+//Modified Date: November 27, 2022
 //Description: Throw balls into bucket
 
 using System;
@@ -49,10 +49,13 @@ namespace PASS2
         
         //Declare textures
         Texture2D bgImg;
+        Texture2D menuBg; 
         Texture2D easyBtnImg;
         Texture2D scoresBtnImg;
         Texture2D exitBtnImg;
         Texture2D menuBtnImg;
+        Texture2D resumeBtnImg;
+        Texture2D blankImg;
         
         
         //Declare rectangles
@@ -60,6 +63,7 @@ namespace PASS2
         Rectangle easyBtnRec;
         Rectangle scoresBtnRec;
         Rectangle exitBtnRec;
+        Rectangle resumeBtnRec;
         Rectangle menuBtnRec;
         
         public Game1()
@@ -89,6 +93,7 @@ namespace PASS2
             easyBtnImg = Content.Load<Texture2D>("Sprites/BtnEasy");
             scoresBtnImg = Content.Load<Texture2D>("Sprites/BtnHighscores");
             exitBtnImg = Content.Load<Texture2D>("Sprites/BtnExit");
+            resumeBtnImg = Content.Load<Texture2D>("Sprites/BtnResume");
             menuBtnImg = Content.Load<Texture2D>("Sprites/BtnMenu");
             
             //Load in the background
@@ -100,6 +105,7 @@ namespace PASS2
             scoresBtnRec = new Rectangle(((screenWidth / 2) - (scoresBtnImg.Width / 2)), 175, scoresBtnImg.Width, scoresBtnImg.Height);
             exitBtnRec = new Rectangle(((screenWidth / 2) - (exitBtnImg.Width / 2)), 250, exitBtnImg.Width, exitBtnImg.Height);
             menuBtnRec =  new Rectangle(0, 0, menuBtnImg.Width, menuBtnImg.Height);
+            resumeBtnRec = new Rectangle(((screenWidth / 2) - (resumeBtnImg.Width / 2)), ((screenHeight / 2) - (resumeBtnImg.Height / 2)), resumeBtnImg.Width, resumeBtnImg.Height);
             base.Initialize();
         }
 
@@ -168,6 +174,9 @@ namespace PASS2
                     //Check if user is pressing the pause button
                     if(kb.IsKeyDown(Keys.Escape) && kb != prevKb)
                         gamestate = GAME;
+                    //Check if user is pressing the resume button
+                    if(resumeBtnRec.Contains(mouse.Position) && mouse.LeftButton == ButtonState.Pressed)
+                        gamestate = GAME;
                     break;
                 
                 case SCORES:
@@ -208,6 +217,10 @@ namespace PASS2
                 
                 case SCORES:
                     spriteBatch.Draw(menuBtnImg, menuBtnRec, Color.White);
+                    break;
+                
+                case PAUSE:
+                    spriteBatch.Draw(resumeBtnImg, resumeBtnRec, Color.White);
                     break;
             }
             spriteBatch.End();
