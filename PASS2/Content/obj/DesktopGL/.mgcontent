@@ -8,6 +8,8 @@
     <File>D:/PASS2/PASS2/Content/Backgrounds/EndGameBG.jpg</File>
     <File>D:/PASS2/PASS2/Content/Backgrounds/HighScoreBG.jpg</File>
     <File>D:/PASS2/PASS2/Content/Backgrounds/MenuBG.png</File>
+    <File>D:/PASS2/PASS2/Content/Fonts/Font.spritefont</File>
+    <File>D:/PASS2/PASS2/Content/Fonts/FontXL.spritefont</File>
     <File>D:/PASS2/PASS2/Content/Sprites/ball.png</File>
     <File>D:/PASS2/PASS2/Content/Sprites/Blank.png</File>
     <File>D:/PASS2/PASS2/Content/Sprites/BlueBucket.png</File>
@@ -32,6 +34,8 @@
     <File>D:/PASS2/PASS2/Content/Sprites/WindArrowRight.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

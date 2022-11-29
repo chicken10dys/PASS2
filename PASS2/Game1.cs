@@ -59,10 +59,7 @@ namespace PASS2
         //Store how filled the meters should be
         int angleMeterFill = 0;
         int speedMeterFill = 0;
-        
-        //Store if ball is launched
-        bool ballMoving = false;
-        
+
         //Declare textures
         //Ui
         Texture2D bgImg;
@@ -74,6 +71,7 @@ namespace PASS2
         Texture2D resumeBtnImg;
         Texture2D blankImg;
         Texture2D meterImg;
+        Texture2D powerArrowImg;
         
         //Game assets
         Texture2D ballImg;
@@ -93,6 +91,7 @@ namespace PASS2
         Rectangle angleMeterFillRec;
         Rectangle speedMeterRec;
         Rectangle speedMeterFillRec;
+        Rectangle speedArrowRec;
 
         //Game assets
         Rectangle ballRec;
@@ -113,12 +112,14 @@ namespace PASS2
         double xSpeed;
         double ySpeed;
         
-        //Store points
-        int points;
-        
         //Store balls
         int balls;
         
+        //Store if ball is launched
+        bool ballMoving = false;
+        
+        //Store points
+        int points;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -151,6 +152,7 @@ namespace PASS2
             menuBtnImg = Content.Load<Texture2D>("Sprites/BtnMenu");
             blankImg = Content.Load<Texture2D>("Sprites/Blank");
             meterImg = Content.Load<Texture2D>("Sprites/PowerMeter");
+            powerArrowImg = Content.Load<Texture2D>("Sprites/PowerArrow");
             
             
             //Game assets
@@ -180,7 +182,7 @@ namespace PASS2
             blueBucketRec = new Rectangle((screenWidth - 100), (screenHeight - blueBucketImg.Height), blueBucketImg.Width, blueBucketImg.Height);
             greenBucketRec = new Rectangle((screenWidth - 200), (screenHeight - 64), 64, 64);
             redBucketRec = new Rectangle((screenWidth - 350), (screenHeight - 96), 96, 96);
-            blueBucketInRec = new Rectangle((blueBucketRec.X + 10), (blueBucketRec.Y + 10), 30, 30);
+            blueBucketInRec = new Rectangle((blueBucketRec.X + 5), (blueBucketRec.Y + 10), 40, 30);
             greenBucketInRec = new Rectangle((greenBucketRec.X + 10), (greenBucketRec.Y + 20), 45, 40);
             redBucketInRec = new Rectangle((redBucketRec.X + 15), (redBucketRec.Y + 20), 70, 50);
             
@@ -248,15 +250,15 @@ namespace PASS2
                         gamestate = PAUSE;
                     
                     //Add logic to change angle
-                    if (kb.IsKeyDown(Keys.Up))
+                    if (kb.IsKeyDown(Keys.Up) && ballMoving == false)
                         angle += 2;
-                    if (kb.IsKeyDown(Keys.Down))
+                    if (kb.IsKeyDown(Keys.Down) && ballMoving == false)
                         angle -= 2;
                     
                     //Add logic to change speed
-                    if (kb.IsKeyDown(Keys.Right))
+                    if (kb.IsKeyDown(Keys.Right) && ballMoving == false)
                         speed += 0.3f;
-                    if (kb.IsKeyDown(Keys.Left))
+                    if (kb.IsKeyDown(Keys.Left) && ballMoving == false)
                         speed -= 0.3f;
                     
                     //Make sure angle is always between 10 and 90
@@ -278,6 +280,8 @@ namespace PASS2
                     //Calculate speed meter fill and fill the meter
                     speedMeterFill = Convert.ToInt32((speed - 5) * (meterImg.Height / 15));
                     speedMeterFillRec = new Rectangle((meterImg.Width * 2), meterImg.Height, (meterImg.Width * -1), (speedMeterFill * -1));
+                    speedArrowRec = new Rectangle((speedMeterRec.X + meterImg.Width + 5), ((speedMeterFill * -1) - (powerArrowImg.Height / 2) + meterImg.Height), powerArrowImg.Width, powerArrowImg.Height);
+                    
                     
                     //Launch ball
                     if (kb.IsKeyDown(Keys.Space) && kb != prevKb && ballMoving == false)
@@ -322,7 +326,7 @@ namespace PASS2
                         }
                         
                         //Check if ball landed and add points
-                        if (blueBucketInRec.Contains(ballRec))
+                        if (blueBucketInRec.Contains(ballRec) || blueBucketInRec.Intersects(ballRec))
                         {
                             ballMoving = false;
                             ballPos.X = 0;
@@ -333,7 +337,7 @@ namespace PASS2
                             angle = 10;
                             speed = 5;
                         }
-                        else if (greenBucketInRec.Contains(ballRec))
+                        else if (greenBucketInRec.Contains(ballRec) || greenBucketInRec.Intersects(ballRec))
                         {
                             ballMoving = false;
                             ballPos.X = 0;
@@ -344,7 +348,7 @@ namespace PASS2
                             angle = 10;
                             speed = 5;
                         }
-                        else if (redBucketInRec.Contains(ballRec))
+                        else if (redBucketInRec.Contains(ballRec) || greenBucketInRec.Intersects(ballRec))
                         {
                             ballMoving = false;
                             ballPos.X = 0;
@@ -407,15 +411,19 @@ namespace PASS2
                     spriteBatch.Draw(ballImg, ballRec, Color.White);
                     spriteBatch.Draw(blankImg, angleMeterFillRec, Color.Red);
                     spriteBatch.Draw(meterImg, angleMeterRec, Color.White);
-                    spriteBatch.Draw(blankImg, speedMeterFillRec, Color.Green);
+                    spriteBatch.Draw(blankImg, speedMeterFillRec, Color.Lime);
                     spriteBatch.Draw(meterImg, speedMeterRec, Color.White);
+                    spriteBatch.Draw(powerArrowImg, speedArrowRec, Color.Lime);
                     spriteBatch.Draw(blueBucketImg, blueBucketRec, Color.White);
                     spriteBatch.Draw(greenBucketImg, greenBucketRec, Color.White);
                     spriteBatch.Draw(redBucketImg, redBucketRec, Color.White);
+                    if (true == false)
+                    {
+                        spriteBatch.Draw(blankImg, redBucketInRec, Color.Magenta);
+                        spriteBatch.Draw(blankImg, greenBucketInRec, Color.Magenta);
+                        spriteBatch.Draw(blankImg, blueBucketInRec, Color.Magenta);
+                    }
                     
-                    //spriteBatch.Draw(blankImg, redBucketInRec, Color.Magenta);
-                    //spriteBatch.Draw(blankImg, greenBucketInRec, Color.Magenta);
-                    //spriteBatch.Draw(blankImg, blueBucketInRec, Color.Magenta);
                     break;
                 
                 case SCORES:
