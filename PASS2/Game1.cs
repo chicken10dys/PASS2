@@ -104,6 +104,13 @@ namespace PASS2
         Rectangle blueBucketInRec;
         Rectangle greenBucketInRec;
         Rectangle redBucketInRec;
+        
+        //Declare Text variables
+        SpriteFont font;
+        
+        Vector2 speedHUDLoc;
+        Vector2 angleHUDLoc;
+        Vector2 pointsHUDLoc;
 
         //Set the ball position for movement
         Vector2 ballPos;
@@ -149,7 +156,7 @@ namespace PASS2
             screenWidth = graphics.GraphicsDevice.Viewport.Width;
             screenHeight = graphics.GraphicsDevice.Viewport.Height;
             
-            //Load in sprites
+            //Load in sprites and fonts
             //Ui
             easyBtnImg = Content.Load<Texture2D>("Sprites/BtnEasy");
             scoresBtnImg = Content.Load<Texture2D>("Sprites/BtnHighscores");
@@ -159,6 +166,8 @@ namespace PASS2
             blankImg = Content.Load<Texture2D>("Sprites/Blank");
             meterImg = Content.Load<Texture2D>("Sprites/PowerMeter");
             powerArrowImg = Content.Load<Texture2D>("Sprites/PowerArrow");
+            
+            font = Content.Load<SpriteFont>("Fonts/Font");
             
             //Game assets
             ballImg = Content.Load<Texture2D>("Sprites/ball");
@@ -172,7 +181,7 @@ namespace PASS2
             scoresBG = Content.Load<Texture2D>("Backgrounds/HighScoreBG");
             endBG = Content.Load<Texture2D>("Backgrounds/EndGameBG");
             
-            //Set rectangle positions
+            //Set positions
             //Ui
             bgRec = new Rectangle(0, 0, screenWidth, screenHeight);
             easyBtnRec = new Rectangle(((screenWidth / 2) - (easyBtnImg.Width / 2)), 225, easyBtnImg.Width, easyBtnImg.Height);
@@ -183,6 +192,12 @@ namespace PASS2
             HUDRec = new Rectangle(0, 0, screenWidth, 32);
             angleMeterRec = new Rectangle(0, HUDRec.Height, meterImg.Width, meterImg.Height);
             speedMeterRec = new Rectangle(meterImg.Width, HUDRec.Height, meterImg.Width, meterImg.Height);
+            
+            angleHUDLoc = new Vector2(10, 0);
+            speedHUDLoc = new Vector2(180, 0);
+            pointsHUDLoc = new Vector2(370, 0);
+            
+            
             //Game assets
             ballPos = new Vector2(0, (screenHeight - 16));
             ballRec = new Rectangle(0, (screenHeight - 16), 16, 16);
@@ -228,7 +243,8 @@ namespace PASS2
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            //if (GamePad.GetState(PlayerIndex.One).Buttons.A == ButtonState.Pressed /*|| Keyboard.GetState().IsKeyDown(Keys.Escape)*/)
+                //gamestate = GAME;
                 //Exit();
 
             // TODO: Add your update logic here
@@ -278,12 +294,15 @@ namespace PASS2
                     if (angle > 90)
                         angle = 90;
                     
-                    //Make sure speed is always between 5 and 20
-                    if (speed < 5)
-                        speed = 5;
-                    if (speed > 20)
-                        speed = 20;
-                    
+                    //Make sure speed is always between 5 and 20 (unless you find the special key)
+                    if (!kb.IsKeyDown(Keys.S))
+                    {
+                        if (speed < 5)
+                            speed = 5;
+                        if (speed > 20)
+                            speed = 20;
+                    }
+
                     //Calculate angle meter fill and fill the meter
                     angleMeterFill = Convert.ToInt32((angle - 10) * 2.6);
                     angleMeterFillRec = new Rectangle(meterImg.Width, (meterImg.Height + HUDRec.Height), (meterImg.Width * -1), (angleMeterFill * -1));
@@ -323,17 +342,23 @@ namespace PASS2
                         if (ballRec.Right > bgRec.Right || ballRec.Left < bgRec.Left || ballRec.Intersects(redBucketRec) || ballRec.Intersects(greenBucketRec) || ballRec.Intersects(blueBucketRec))
                             xSpeed = xSpeed * -1;
                     
-                        if (ballRec.Top < bgRec.Top /*|| ballRec.Bottom > bgRec.Bottom*/)
+                        if (ballRec.Top < (bgRec.Top + HUDRec.Height) /*|| ballRec.Bottom > bgRec.Bottom*/)
                             ySpeed = ySpeed * -1;
-                        if (ballRec.Bottom > bgRec.Bottom)
+                        if (ballRec.Bottom > bgRec.Bottom && kb.IsKeyDown(Keys.B))
+                            ySpeed = ySpeed * -1;
+                        if (!kb.IsKeyDown(Keys.B))
                         {
-                            ballMoving = false;
-                            ballPos.X = 0;
-                            ballPos.Y = (screenHeight - 16);
-                            ballRec.X = (int)ballPos.X;
-                            ballRec.Y = (int)ballPos.Y;
-                            angle = 10;
-                            speed = 5;
+                            if (ballRec.Bottom > bgRec.Bottom)
+                            {
+                                ballMoving = false;
+                                ballPos.X = 0;
+                                ballPos.Y = (screenHeight - 16);
+                                ballRec.X = (int)ballPos.X;
+                                ballRec.Y = (int)ballPos.Y;
+                                angle = 10;
+                                speed = 5;
+                            }
+
                         }
                         
                         //Check if ball landed and add points
@@ -430,6 +455,9 @@ namespace PASS2
                     spriteBatch.Draw(blueBucketImg, blueBucketRec, Color.White);
                     spriteBatch.Draw(greenBucketImg, greenBucketRec, Color.White);
                     spriteBatch.Draw(redBucketImg, redBucketRec, Color.White);
+                    spriteBatch.DrawString(font, "Speed: " + Math.Round(speed, 2), speedHUDLoc, Color.Lime);
+                    spriteBatch.DrawString(font, "Angle: " + angle, angleHUDLoc, Color.Red);
+                    spriteBatch.DrawString(font, "Points: " + points, pointsHUDLoc, Color.Pink);
                     if (false)
                     {
                         spriteBatch.Draw(blankImg, redBucketInRec, Color.Magenta);
