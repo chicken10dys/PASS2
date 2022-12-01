@@ -62,10 +62,10 @@ namespace PASS2
 
         //Declare textures
         //Ui
-        Texture2D bgImg;
-        Texture2D menuBg;
-        Texture2D scoresBG;
-        Texture2D endBG;
+        
+        //Store backgrounds (numbers tied to gamestates)
+        Texture2D [] bgImg = new Texture2D [5];
+        
         Texture2D easyBtnImg;
         Texture2D scoresBtnImg;
         Texture2D exitBtnImg;
@@ -77,9 +77,9 @@ namespace PASS2
         
         //Game assets
         Texture2D ballImg;
-        Texture2D blueBucketImg;
-        Texture2D greenBucketImg;
-        Texture2D redBucketImg;
+        
+        Texture2D [] bucketImg = new Texture2D [3];
+        
 
             //Declare rectangles
         //Ui
@@ -98,13 +98,11 @@ namespace PASS2
 
         //Game assets
         Rectangle ballRec;
-        Rectangle blueBucketRec;
-        Rectangle greenBucketRec;
-        Rectangle redBucketRec;
-        Rectangle blueBucketInRec;
-        Rectangle greenBucketInRec;
-        Rectangle redBucketInRec;
         
+        //Rectangles related to buckets blue = 0, green = 1, red = 2
+        Rectangle [] bucketRec = new Rectangle [3];
+        Rectangle [] bucketInRec = new Rectangle [3];
+
         //Declare Text variables
         SpriteFont font;
         
@@ -171,15 +169,15 @@ namespace PASS2
             
             //Game assets
             ballImg = Content.Load<Texture2D>("Sprites/ball");
-            blueBucketImg = Content.Load<Texture2D>("Sprites/BlueBucket");
-            greenBucketImg = Content.Load<Texture2D>("Sprites/GreenBucket");
-            redBucketImg = Content.Load<Texture2D>("Sprites/RedBucket");
+            bucketImg[0] = Content.Load<Texture2D>("Sprites/BlueBucket");
+            bucketImg[1] = Content.Load<Texture2D>("Sprites/GreenBucket");
+            bucketImg[2] = Content.Load<Texture2D>("Sprites/RedBucket");
             
             //Load in the background
-            bgImg = Content.Load<Texture2D>("Backgrounds/CircusBG");
-            menuBg = Content.Load<Texture2D>("Backgrounds/MenuBG");
-            scoresBG = Content.Load<Texture2D>("Backgrounds/HighScoreBG");
-            endBG = Content.Load<Texture2D>("Backgrounds/EndGameBG");
+            bgImg[GAME] = Content.Load<Texture2D>("Backgrounds/CircusBG");
+            bgImg[MENU] = Content.Load<Texture2D>("Backgrounds/MenuBG");
+            bgImg[SCORES] = Content.Load<Texture2D>("Backgrounds/HighScoreBG");
+            bgImg[END] = Content.Load<Texture2D>("Backgrounds/EndGameBG");
             
             //Set positions
             //Ui
@@ -202,15 +200,18 @@ namespace PASS2
             ballPos = new Vector2(0, (screenHeight - 16));
             ballRec = new Rectangle(0, (screenHeight - 16), 16, 16);
 
-            //blueBucketRec = new Rectangle((screenWidth - 100), (screenHeight - blueBucketImg.Height), blueBucketImg.Width, blueBucketImg.Height);
+            //blueBucketRec = new Rectangle((screenWidth - 100), (screenHeight - bucketImg[0].Height), bucketImg[0].Width, bucketImg[0].Height);
             //greenBucketRec = new Rectangle((screenWidth - 200), (screenHeight - 64), 64, 64);
             //redBucketRec = new Rectangle((screenWidth - 350), (screenHeight - 96), 96, 96);
-            blueBucketRec = new Rectangle((screenWidth - 100), (screenHeight - blueBucketImg.Height), blueBucketImg.Width, blueBucketImg.Height);
-            greenBucketRec = new Rectangle((screenWidth - 250), (screenHeight - greenBucketImg.Height), greenBucketImg.Width, greenBucketImg.Height);
-            redBucketRec = new Rectangle((screenWidth - 450), (screenHeight - redBucketImg.Height), redBucketImg.Width, redBucketImg.Height);
-            blueBucketInRec = new Rectangle((blueBucketRec.X), (blueBucketRec.Y + 3), blueBucketImg.Width, (blueBucketImg.Height / 2));
-            greenBucketInRec = new Rectangle((greenBucketRec.X), (greenBucketRec.Y + 5), greenBucketImg.Width, (greenBucketImg.Height / 2));
-            redBucketInRec = new Rectangle((redBucketRec.X), (redBucketRec.Y + 10), redBucketImg.Width, (redBucketImg.Height / 2));
+
+            //Set bucket rectangles. blue = 0, green = 1, red = 2
+            bucketRec[0] = new Rectangle((screenWidth - 100), (screenHeight - bucketImg[0].Height), bucketImg[0].Width, bucketImg[0].Height);
+            bucketRec[1] = new Rectangle((screenWidth - 250), (screenHeight - bucketImg[1].Height), bucketImg[1].Width, bucketImg[1].Height);
+            bucketRec[2] = new Rectangle((screenWidth - 450), (screenHeight - bucketImg[2].Height), bucketImg[2].Width, bucketImg[2].Height);
+            
+            bucketInRec[0] = new Rectangle((bucketRec[0].X), (bucketRec[0].Y + 3), bucketImg[0].Width, (bucketImg[0].Height / 2));
+            bucketInRec[1] = new Rectangle((bucketRec[1].X), (bucketRec[1].Y + 5), bucketImg[1].Width, (bucketImg[1].Height / 2));
+            bucketInRec[2] = new Rectangle((bucketRec[2].X), (bucketRec[2].Y + 10), bucketImg[2].Width, (bucketImg[2].Height / 2));
             
             base.Initialize();
         }
@@ -339,7 +340,7 @@ namespace PASS2
                         ballRec.Y = (int)ballPos.Y;
                         
                         //Bounce ball
-                        if (ballRec.Right > bgRec.Right || ballRec.Left < bgRec.Left || ballRec.Intersects(redBucketRec) || ballRec.Intersects(greenBucketRec) || ballRec.Intersects(blueBucketRec))
+                        if (ballRec.Right > bgRec.Right || ballRec.Left < bgRec.Left || ballRec.Intersects(bucketRec[0]) || ballRec.Intersects(bucketRec[1]) || ballRec.Intersects(bucketRec[2]))
                             xSpeed = xSpeed * -1;
                     
                         if (ballRec.Top < (bgRec.Top + HUDRec.Height) /*|| ballRec.Bottom > bgRec.Bottom*/)
@@ -362,7 +363,7 @@ namespace PASS2
                         }
                         
                         //Check if ball landed and add points
-                        if (blueBucketInRec.Contains(ballRec) /*|| blueBucketInRec.Intersects(ballRec)*/)
+                        if (bucketInRec[0].Contains(ballRec) /*|| bucketInRec[0].Intersects(ballRec)*/)
                         {
                             ballMoving = false;
                             ballPos.X = 0;
@@ -373,7 +374,7 @@ namespace PASS2
                             angle = 10;
                             speed = 5;
                         }
-                        else if (greenBucketInRec.Contains(ballRec) /*|| greenBucketInRec.Intersects(ballRec)*/)
+                        else if (bucketInRec[1].Contains(ballRec) /*|| bucketInRec[1].Intersects(ballRec)*/)
                         {
                             ballMoving = false;
                             ballPos.X = 0;
@@ -384,7 +385,7 @@ namespace PASS2
                             angle = 10;
                             speed = 5;
                         }
-                        else if (redBucketInRec.Contains(ballRec) /*|| greenBucketInRec.Intersects(ballRec)*/)
+                        else if (bucketInRec[2].Contains(ballRec) /*|| bucketInRec[1].Intersects(ballRec)*/)
                         {
                             ballMoving = false;
                             ballPos.X = 0;
@@ -430,20 +431,22 @@ namespace PASS2
             //Draw required objects based on the gamestate
             spriteBatch.Begin();
             
+            
+            
             if (gamestate == 2)
-                spriteBatch.Draw(bgImg, bgRec, Color.White);
+                spriteBatch.Draw(bgImg[gamestate], bgRec, Color.White);
             
             switch (gamestate)
             {
                 case MENU:
-                    spriteBatch.Draw(menuBg, bgRec, Color.White);
+                    spriteBatch.Draw(bgImg[gamestate], bgRec, Color.White);
                     spriteBatch.Draw(easyBtnImg, easyBtnRec, Color.White);
                     spriteBatch.Draw(scoresBtnImg, scoresBtnRec, Color.White);
                     spriteBatch.Draw(exitBtnImg, exitBtnRec, Color.White);
                     break;
                 
                 case GAME:
-                    spriteBatch.Draw(bgImg, bgRec, Color.White);
+                    spriteBatch.Draw(bgImg[gamestate], bgRec, Color.White);
                     Console.WriteLine(ballRec.X + ", " + ballRec.Y + "angle: " + angle + " " + ballMoving + " Points: " + points);
                     spriteBatch.Draw(ballImg, ballRec, Color.White);
                     spriteBatch.Draw(blankImg, angleMeterFillRec, Color.Red);
@@ -452,23 +455,26 @@ namespace PASS2
                     spriteBatch.Draw(meterImg, speedMeterRec, Color.White);
                     spriteBatch.Draw(powerArrowImg, speedArrowRec, Color.Lime);
                     spriteBatch.Draw(blankImg, HUDRec, Color.Black * 0.7f);
-                    spriteBatch.Draw(blueBucketImg, blueBucketRec, Color.White);
-                    spriteBatch.Draw(greenBucketImg, greenBucketRec, Color.White);
-                    spriteBatch.Draw(redBucketImg, redBucketRec, Color.White);
+                    
+                    //Draw buckets
+                    spriteBatch.Draw(bucketImg[0], bucketRec[0], Color.White);
+                    spriteBatch.Draw(bucketImg[1], bucketRec[1], Color.White);
+                    spriteBatch.Draw(bucketImg[2], bucketRec[2], Color.White);
+                    
                     spriteBatch.DrawString(font, "Speed: " + Math.Round(speed, 2), speedHUDLoc, Color.Lime);
                     spriteBatch.DrawString(font, "Angle: " + angle, angleHUDLoc, Color.Red);
                     spriteBatch.DrawString(font, "Points: " + points, pointsHUDLoc, Color.Pink);
                     if (false)
                     {
-                        spriteBatch.Draw(blankImg, redBucketInRec, Color.Magenta);
-                        spriteBatch.Draw(blankImg, greenBucketInRec, Color.Magenta);
-                        spriteBatch.Draw(blankImg, blueBucketInRec, Color.Magenta);
+                        spriteBatch.Draw(blankImg, bucketInRec[2], Color.Magenta);
+                        spriteBatch.Draw(blankImg, bucketInRec[1], Color.Magenta);
+                        spriteBatch.Draw(blankImg, bucketInRec[0], Color.Magenta);
                     }
                     
                     break;
                 
                 case SCORES:
-                    spriteBatch.Draw(scoresBG, bgRec, Color.White);
+                    spriteBatch.Draw(bgImg[gamestate], bgRec, Color.White);
                     spriteBatch.Draw(menuBtnImg, menuBtnRec, Color.White);
                     break;
                 
@@ -476,6 +482,8 @@ namespace PASS2
                     spriteBatch.Draw(resumeBtnImg, resumeBtnRec, Color.White);
                     break;
             }
+            
+            
             spriteBatch.End();
             base.Draw(gameTime);
         }
