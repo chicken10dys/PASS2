@@ -431,22 +431,19 @@ namespace PASS2
             //Draw required objects based on the gamestate
             spriteBatch.Begin();
             
-            
-            
-            if (gamestate == 2)
+            //Draw the background for all gamestates except pause
+            if (gamestate != PAUSE)
                 spriteBatch.Draw(bgImg[gamestate], bgRec, Color.White);
-            
+                
             switch (gamestate)
             {
                 case MENU:
-                    spriteBatch.Draw(bgImg[gamestate], bgRec, Color.White);
                     spriteBatch.Draw(easyBtnImg, easyBtnRec, Color.White);
                     spriteBatch.Draw(scoresBtnImg, scoresBtnRec, Color.White);
                     spriteBatch.Draw(exitBtnImg, exitBtnRec, Color.White);
                     break;
                 
                 case GAME:
-                    spriteBatch.Draw(bgImg[gamestate], bgRec, Color.White);
                     Console.WriteLine(ballRec.X + ", " + ballRec.Y + "angle: " + angle + " " + ballMoving + " Points: " + points);
                     spriteBatch.Draw(ballImg, ballRec, Color.White);
                     spriteBatch.Draw(blankImg, angleMeterFillRec, Color.Red);
@@ -474,7 +471,6 @@ namespace PASS2
                     break;
                 
                 case SCORES:
-                    spriteBatch.Draw(bgImg[gamestate], bgRec, Color.White);
                     spriteBatch.Draw(menuBtnImg, menuBtnRec, Color.White);
                     break;
                 
