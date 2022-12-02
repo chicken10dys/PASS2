@@ -109,13 +109,17 @@ namespace PASS2
 
         //Declare Text variables
         SpriteFont font;
+        SpriteFont fontXL;
         
-        //0 = angle, 1 = speed, 2 = points, 3 = balls, 4 = streak
-        Vector2 [] statsHUDLoc = new Vector2 [5];
+        //0 = angle, 1 = speed, 2 = points, 3 = balls, 4 = streak, 5 = High score
+        Vector2 [] statsHUDLoc = new Vector2 [6];
 
         //Set the ball position for movement
         Vector2 ballPos;
         
+        //Store text positions for points display in the high scores and end page. 0 = score, 1 = high score
+        Vector2 [] scoresLoc = new Vector2 [2];
+
         int dirX = 0;       //Stores the x direction, which will be one of 1(right), -1(left) or 0(stopped)
         int dirY = 0;      //Stores the y direction, which will be one of 1(down), -1(up) or 0(stopped)
         
@@ -129,8 +133,12 @@ namespace PASS2
         //Store if ball is launched
         bool ballMoving = false;
         
-        //Store points
+        //Store points and previous points
         int points;
+        int prevPoints;
+        
+        //Store high scores
+        int highScore;
         
         //Store streak
         int streak;
@@ -173,6 +181,7 @@ namespace PASS2
             powerArrowImg = Content.Load<Texture2D>("Sprites/PowerArrow");
             
             font = Content.Load<SpriteFont>("Fonts/Font");
+            fontXL = Content.Load<SpriteFont>("Fonts/FontXL");
             
             //Game assets
             ballImg = Content.Load<Texture2D>("Sprites/ball");
@@ -199,14 +208,16 @@ namespace PASS2
             angleMeterRec = new Rectangle(0, HUDRec.Height, meterImg.Width, meterImg.Height);
             speedMeterRec = new Rectangle(meterImg.Width, HUDRec.Height, meterImg.Width, meterImg.Height);
             
-            statsHUDLoc[0] = new Vector2(10, 0);
-            statsHUDLoc[1] = new Vector2(160, 0);
-            statsHUDLoc[2] = new Vector2(340, 0);
-            statsHUDLoc[3] = new Vector2(530, 0);
-            statsHUDLoc[4] = new Vector2(650, 0);
+            //0 = angle, 1 = speed, 2 = points, 3 = balls, 4 = streak, 5 = High score
+            statsHUDLoc[0] = new Vector2(0, 0);
+            statsHUDLoc[1] = new Vector2(150, 0);
+            statsHUDLoc[2] = new Vector2(330, 0);
+            statsHUDLoc[3] = new Vector2(520, 0);
+            statsHUDLoc[4] = new Vector2(640, HUDRec.Height + 5);
+            statsHUDLoc[5] = new Vector2(640, 0);
             
             
-            
+
             //Game assets
             ballPos = new Vector2(0, (screenHeight - 16));
             ballRec = new Rectangle(0, (screenHeight - 16), 16, 16);
@@ -422,6 +433,9 @@ namespace PASS2
                         {
                             gamestate = END;
                             balls = 5;
+                            if (points > highScore)
+                                highScore = points;
+                            prevPoints = points;
                             points = 0;
                             streak = 0;
                         }
@@ -443,11 +457,19 @@ namespace PASS2
                     //Check if user is pressing the menu button
                     if(menuBtnRec[SCORES].Contains(mouse.Position) && mouse.LeftButton == ButtonState.Pressed && mouse != prevMouse)
                         gamestate = MENU;
+                    
+                    //Store text positions for points display in the high scores and end page. 0 = score, 1 = high score
+                    scoresLoc[0] = new Vector2((screenWidth / 2) - (fontXL.MeasureString("Previous score: " + prevPoints) / 2).X, 25);
+                    scoresLoc[1] = new Vector2((screenWidth / 2) - (fontXL.MeasureString("High Score: " + highScore) / 2).X, 125);
                     break;
                 case END:
                     //Check if user is pressing the menu button
                     if(menuBtnRec[END].Contains(mouse.Position) && mouse.LeftButton == ButtonState.Pressed && mouse != prevMouse)
                         gamestate = MENU;
+                    
+                    //Store text positions for points display in the high scores and end page. 0 = score, 1 = high score
+                    scoresLoc[0] = new Vector2((screenWidth / 2) - (fontXL.MeasureString("Score: " + prevPoints) / 2).X, 25);
+                    scoresLoc[1] = new Vector2((screenWidth / 2) - (fontXL.MeasureString("High Score: " + highScore) / 2).X, 125);
                     break;
             }
             base.Update(gameTime);
@@ -497,6 +519,7 @@ namespace PASS2
                     spriteBatch.DrawString(font, "Points: " + points, statsHUDLoc[2], Color.Pink);
                     spriteBatch.DrawString(font, "Balls: " + balls, statsHUDLoc[3], Color.Orange);
                     spriteBatch.DrawString(font, "Streak: " + streak, statsHUDLoc[4], Color.Cyan);
+                    spriteBatch.DrawString(font, "High: " + highScore, statsHUDLoc[5],  Color.Purple);
                     if (false)
                     {
                         spriteBatch.Draw(blankImg, bucketInRec[2], Color.Magenta);
@@ -508,6 +531,8 @@ namespace PASS2
                 
                 case SCORES:
                     spriteBatch.Draw(menuBtnImg, menuBtnRec[gamestate], Color.White);
+                    spriteBatch.DrawString(fontXL, "Previous score: " + prevPoints, scoresLoc[0], Color.Black);
+                    spriteBatch.DrawString(fontXL, "High score: " + highScore, scoresLoc[1], Color.Black);
                     break;
                 
                 case PAUSE:
@@ -516,6 +541,8 @@ namespace PASS2
                 
                 case END:
                     spriteBatch.Draw(menuBtnImg, menuBtnRec[gamestate], Color.White);
+                    spriteBatch.DrawString(fontXL, "Score: " + prevPoints, scoresLoc[0], Color.Black);
+                    spriteBatch.DrawString(fontXL, "High score: " + highScore, scoresLoc[1], Color.Black);
                     
                     break;
             }
