@@ -30,6 +30,7 @@ namespace PASS2
         
         //Get mouse and keyboard state
         MouseState mouse;
+        MouseState prevMouse;
         KeyboardState kb;
         KeyboardState prevKb;
         
@@ -88,7 +89,10 @@ namespace PASS2
         Rectangle scoresBtnRec;
         Rectangle exitBtnRec;
         Rectangle resumeBtnRec;
-        Rectangle menuBtnRec;
+        
+        //Store menu button location bassed on gamestate
+        Rectangle [] menuBtnRec = new Rectangle [5];
+        
         Rectangle angleMeterRec;
         Rectangle angleMeterFillRec;
         Rectangle speedMeterRec;
@@ -106,9 +110,8 @@ namespace PASS2
         //Declare Text variables
         SpriteFont font;
         
-        Vector2 speedHUDLoc;
-        Vector2 angleHUDLoc;
-        Vector2 pointsHUDLoc;
+        //0 = angle, 1 = speed, 2 = points, 3 = balls, 4 = streak
+        Vector2 [] statsHUDLoc = new Vector2 [5];
 
         //Set the ball position for movement
         Vector2 ballPos;
@@ -121,13 +124,17 @@ namespace PASS2
         double ySpeed;
         
         //Store balls
-        int balls;
+        int balls = 5;
         
         //Store if ball is launched
         bool ballMoving = false;
         
         //Store points
         int points;
+        
+        //Store streak
+        int streak;
+        
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -185,15 +192,19 @@ namespace PASS2
             easyBtnRec = new Rectangle(((screenWidth / 2) - (easyBtnImg.Width / 2)), 225, easyBtnImg.Width, easyBtnImg.Height);
             scoresBtnRec = new Rectangle(((screenWidth / 2) - (scoresBtnImg.Width / 2)), 300, scoresBtnImg.Width, scoresBtnImg.Height);
             exitBtnRec = new Rectangle(((screenWidth / 2) - (exitBtnImg.Width / 2)), 375, exitBtnImg.Width, exitBtnImg.Height);
-            menuBtnRec =  new Rectangle(0, 0, menuBtnImg.Width, menuBtnImg.Height);
+            menuBtnRec[SCORES] =  new Rectangle(0, 0, menuBtnImg.Width, menuBtnImg.Height);
+            menuBtnRec[END] =  new Rectangle((screenWidth /2 - menuBtnImg.Width /2), (screenHeight /2 - menuBtnImg.Height /2), menuBtnImg.Width, menuBtnImg.Height);
             resumeBtnRec = new Rectangle(((screenWidth / 2) - (resumeBtnImg.Width / 2)), ((screenHeight / 2) - (resumeBtnImg.Height / 2)), resumeBtnImg.Width, resumeBtnImg.Height);
             HUDRec = new Rectangle(0, 0, screenWidth, 32);
             angleMeterRec = new Rectangle(0, HUDRec.Height, meterImg.Width, meterImg.Height);
             speedMeterRec = new Rectangle(meterImg.Width, HUDRec.Height, meterImg.Width, meterImg.Height);
             
-            angleHUDLoc = new Vector2(10, 0);
-            speedHUDLoc = new Vector2(180, 0);
-            pointsHUDLoc = new Vector2(370, 0);
+            statsHUDLoc[0] = new Vector2(10, 0);
+            statsHUDLoc[1] = new Vector2(160, 0);
+            statsHUDLoc[2] = new Vector2(340, 0);
+            statsHUDLoc[3] = new Vector2(530, 0);
+            statsHUDLoc[4] = new Vector2(650, 0);
+            
             
             
             //Game assets
@@ -251,6 +262,7 @@ namespace PASS2
             // TODO: Add your update logic here
 
             //Update your keyboard and mouse position
+            prevMouse = mouse;
             mouse = Mouse.GetState();
             prevKb = kb;
             kb = Keyboard.GetState();
@@ -260,15 +272,15 @@ namespace PASS2
                 
                 case MENU:
                     //Check if user is pressing the exit button and close the game
-                    if(exitBtnRec.Contains(mouse.Position) && mouse.LeftButton == ButtonState.Pressed)
+                    if(exitBtnRec.Contains(mouse.Position) && mouse.LeftButton == ButtonState.Pressed && mouse != prevMouse)
                         Exit();
                     
                     //Check if user is pressing the easy button and start the game in easy mode (by switching the gamestate)
-                    if(easyBtnRec.Contains(mouse.Position) && mouse.LeftButton == ButtonState.Pressed)
+                    if(easyBtnRec.Contains(mouse.Position) && mouse.LeftButton == ButtonState.Pressed && mouse != prevMouse)
                         gamestate = GAME;
                     
                     //Check if user is pressing the score button and open the high score page (by switching the gamestate)
-                    if(scoresBtnRec.Contains(mouse.Position) && mouse.LeftButton == ButtonState.Pressed)
+                    if(scoresBtnRec.Contains(mouse.Position) && mouse.LeftButton == ButtonState.Pressed && mouse != prevMouse)
                         gamestate = SCORES;
                     break;
                 
@@ -318,6 +330,7 @@ namespace PASS2
                     if (kb.IsKeyDown(Keys.Space) && kb != prevKb && ballMoving == false)
                     {
                         ballMoving = true;
+                        balls -= 1;
                         /*dirX = (1);
                         dirY = (angle / 10) * -1;*/
                         
@@ -325,7 +338,8 @@ namespace PASS2
                         ySpeed = - speed * Math.Sin(angle * (Math.PI/180.0));
                         
                     }
-                     
+                    
+                    
                     //Calculate ball movement
                     if (ballMoving == true)
                     {
@@ -347,6 +361,8 @@ namespace PASS2
                             ySpeed = ySpeed * -1;
                         if (ballRec.Bottom > bgRec.Bottom && kb.IsKeyDown(Keys.B))
                             ySpeed = ySpeed * -1;
+                        
+                        //Check if ball hit the floor
                         if (!kb.IsKeyDown(Keys.B))
                         {
                             if (ballRec.Bottom > bgRec.Bottom)
@@ -358,6 +374,7 @@ namespace PASS2
                                 ballRec.Y = (int)ballPos.Y;
                                 angle = 10;
                                 speed = 5;
+                                streak = 0;
                             }
 
                         }
@@ -373,6 +390,7 @@ namespace PASS2
                             points += 400;
                             angle = 10;
                             speed = 5;
+                            streak += 1;
                         }
                         else if (bucketInRec[1].Contains(ballRec) /*|| bucketInRec[1].Intersects(ballRec)*/)
                         {
@@ -384,6 +402,7 @@ namespace PASS2
                             points += 200;
                             angle = 10;
                             speed = 5;
+                            streak += 1;
                         }
                         else if (bucketInRec[2].Contains(ballRec) /*|| bucketInRec[1].Intersects(ballRec)*/)
                         {
@@ -395,6 +414,16 @@ namespace PASS2
                             points += 100;
                             angle = 10;
                             speed = 5;
+                            streak += 1;
+                        }
+                        
+                        //Check if the player is out of balls and end the game
+                        if (balls == 0 && ballMoving == false)
+                        {
+                            gamestate = END;
+                            balls = 5;
+                            points = 0;
+                            streak = 0;
                         }
                     }
                     //Set ball position
@@ -406,13 +435,18 @@ namespace PASS2
                     if(kb.IsKeyDown(Keys.Escape) && kb != prevKb)
                         gamestate = GAME;
                     //Check if user is pressing the resume button
-                    if(resumeBtnRec.Contains(mouse.Position) && mouse.LeftButton == ButtonState.Pressed)
+                    if(resumeBtnRec.Contains(mouse.Position) && mouse.LeftButton == ButtonState.Pressed && mouse != prevMouse)
                         gamestate = GAME;
                     break;
                 
                 case SCORES:
                     //Check if user is pressing the menu button
-                    if(menuBtnRec.Contains(mouse.Position) && mouse.LeftButton == ButtonState.Pressed)
+                    if(menuBtnRec[SCORES].Contains(mouse.Position) && mouse.LeftButton == ButtonState.Pressed && mouse != prevMouse)
+                        gamestate = MENU;
+                    break;
+                case END:
+                    //Check if user is pressing the menu button
+                    if(menuBtnRec[END].Contains(mouse.Position) && mouse.LeftButton == ButtonState.Pressed && mouse != prevMouse)
                         gamestate = MENU;
                     break;
             }
@@ -458,9 +492,11 @@ namespace PASS2
                     spriteBatch.Draw(bucketImg[1], bucketRec[1], Color.White);
                     spriteBatch.Draw(bucketImg[2], bucketRec[2], Color.White);
                     
-                    spriteBatch.DrawString(font, "Speed: " + Math.Round(speed, 2), speedHUDLoc, Color.Lime);
-                    spriteBatch.DrawString(font, "Angle: " + angle, angleHUDLoc, Color.Red);
-                    spriteBatch.DrawString(font, "Points: " + points, pointsHUDLoc, Color.Pink);
+                    spriteBatch.DrawString(font, "Angle: " + angle, statsHUDLoc[0], Color.Red);
+                    spriteBatch.DrawString(font, "Speed: " + Math.Round(speed, 2), statsHUDLoc[1], Color.Lime);
+                    spriteBatch.DrawString(font, "Points: " + points, statsHUDLoc[2], Color.Pink);
+                    spriteBatch.DrawString(font, "Balls: " + balls, statsHUDLoc[3], Color.Orange);
+                    spriteBatch.DrawString(font, "Streak: " + streak, statsHUDLoc[4], Color.Cyan);
                     if (false)
                     {
                         spriteBatch.Draw(blankImg, bucketInRec[2], Color.Magenta);
@@ -471,11 +507,16 @@ namespace PASS2
                     break;
                 
                 case SCORES:
-                    spriteBatch.Draw(menuBtnImg, menuBtnRec, Color.White);
+                    spriteBatch.Draw(menuBtnImg, menuBtnRec[gamestate], Color.White);
                     break;
                 
                 case PAUSE:
                     spriteBatch.Draw(resumeBtnImg, resumeBtnRec, Color.White);
+                    break;
+                
+                case END:
+                    spriteBatch.Draw(menuBtnImg, menuBtnRec[gamestate], Color.White);
+                    
                     break;
             }
             
