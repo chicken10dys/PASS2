@@ -2,7 +2,7 @@
 //File Name: Game1.cs
 //Project Name: PASS2
 //Creation Date: November 24, 2022
-//Modified Date: November 27, 2022
+//Modified Date: December 4, 2022
 //Description: Throw balls into bucket
 
 using System;
@@ -81,6 +81,9 @@ namespace PASS2
         
         Texture2D [] bucketImg = new Texture2D [3];
         
+        Texture2D splashImg;
+        
+        Animation[] splashAnim = new Animation [3];
 
             //Declare rectangles
         //Ui
@@ -102,6 +105,9 @@ namespace PASS2
 
         //Game assets
         Rectangle ballRec;
+        
+        //Splash
+        Vector2[] splashPos = new Vector2 [3];
         
         //Rectangles related to buckets blue = 0, green = 1, red = 2
         Rectangle [] bucketRec = new Rectangle [3];
@@ -188,6 +194,7 @@ namespace PASS2
             bucketImg[0] = Content.Load<Texture2D>("Sprites/BlueBucket");
             bucketImg[1] = Content.Load<Texture2D>("Sprites/GreenBucket");
             bucketImg[2] = Content.Load<Texture2D>("Sprites/RedBucket");
+            splashImg = Content.Load<Texture2D>("Sprites/Splash");
             
             //Load in the background
             bgImg[GAME] = Content.Load<Texture2D>("Backgrounds/CircusBG");
@@ -215,16 +222,10 @@ namespace PASS2
             statsHUDLoc[3] = new Vector2(520, 0);
             statsHUDLoc[4] = new Vector2(640, HUDRec.Height + 5);
             statsHUDLoc[5] = new Vector2(640, 0);
-            
-            
 
             //Game assets
             ballPos = new Vector2(0, (screenHeight - 16));
             ballRec = new Rectangle(0, (screenHeight - 16), 16, 16);
-
-            //blueBucketRec = new Rectangle((screenWidth - 100), (screenHeight - bucketImg[0].Height), bucketImg[0].Width, bucketImg[0].Height);
-            //greenBucketRec = new Rectangle((screenWidth - 200), (screenHeight - 64), 64, 64);
-            //redBucketRec = new Rectangle((screenWidth - 350), (screenHeight - 96), 96, 96);
 
             //Set bucket rectangles. blue = 0, green = 1, red = 2
             bucketRec[0] = new Rectangle((screenWidth - 100), (screenHeight - bucketImg[0].Height), bucketImg[0].Width, bucketImg[0].Height);
@@ -235,6 +236,16 @@ namespace PASS2
             bucketInRec[1] = new Rectangle((bucketRec[1].X), (bucketRec[1].Y + 5), bucketImg[1].Width, (bucketImg[1].Height / 2));
             bucketInRec[2] = new Rectangle((bucketRec[2].X), (bucketRec[2].Y + 10), bucketImg[2].Width, (bucketImg[2].Height / 2));
             
+            //Splash location
+            splashPos[0] = new Vector2(bucketRec[0].X , (bucketRec[0].Y - bucketImg[0].Height /2));
+            splashPos[1] = new Vector2(bucketRec[1].X , (bucketRec[1].Y - bucketImg[1].Height /2));
+            splashPos[2] = new Vector2(bucketRec[2].X , (bucketRec[2].Y - bucketImg[2].Height /2));
+            //Load splash animations
+            splashAnim[0] = new Animation(splashImg, 9, 5, 45, 45, 45, 2, 1, splashPos[0], 0.24f, false);
+            splashAnim[1] = new Animation(splashImg, 9, 5, 45, 45, 45, 2, 1, splashPos[1], 0.48f, false);
+            splashAnim[2] = new Animation(splashImg, 9, 5, 45, 45, 45, 2, 1, splashPos[2], 0.64f, false);
+            
+            Console.WriteLine("loaded :)");
             base.Initialize();
         }
  
@@ -278,6 +289,10 @@ namespace PASS2
             prevKb = kb;
             kb = Keyboard.GetState();
             
+            //Update animations
+            splashAnim[0].Update(gameTime);
+            splashAnim[1].Update(gameTime);
+            splashAnim[2].Update(gameTime);
             switch (gamestate)
             {
                 
@@ -402,6 +417,7 @@ namespace PASS2
                             angle = 10;
                             speed = 5;
                             streak += 1;
+                            splashAnim[0].isAnimating = true;
                         }
                         else if (bucketInRec[1].Contains(ballRec) /*|| bucketInRec[1].Intersects(ballRec)*/)
                         {
@@ -414,6 +430,7 @@ namespace PASS2
                             angle = 10;
                             speed = 5;
                             streak += 1;
+                            splashAnim[1].isAnimating = true;
                         }
                         else if (bucketInRec[2].Contains(ballRec) /*|| bucketInRec[1].Intersects(ballRec)*/)
                         {
@@ -426,10 +443,11 @@ namespace PASS2
                             angle = 10;
                             speed = 5;
                             streak += 1;
+                            splashAnim[2].isAnimating = true;
                         }
                         
                         //Check if the player is out of balls and end the game
-                        if (balls == 0 && ballMoving == false)
+                        if (balls <= 0 && ballMoving == false && splashAnim[0].isAnimating == false && splashAnim[1].isAnimating == false && splashAnim[2].isAnimating == false) 
                         {
                             gamestate = END;
                             balls = 5;
@@ -500,7 +518,8 @@ namespace PASS2
                     break;
                 
                 case GAME:
-                    Console.WriteLine(ballRec.X + ", " + ballRec.Y + "angle: " + angle + " " + ballMoving + " Points: " + points);
+                    //Console.WriteLine(ballRec.X + ", " + ballRec.Y + "angle: " + angle + " " + ballMoving + " Points: " + points);
+                    Console.WriteLine(Convert.ToString(splashAnim[0].isAnimating) + Convert.ToString(splashAnim[1].isAnimating) + Convert.ToString(splashAnim[2].isAnimating));
                     spriteBatch.Draw(ballImg, ballRec, Color.White);
                     spriteBatch.Draw(blankImg, angleMeterFillRec, Color.Red);
                     spriteBatch.Draw(meterImg, angleMeterRec, Color.White);
@@ -520,6 +539,12 @@ namespace PASS2
                     spriteBatch.DrawString(font, "Balls: " + balls, statsHUDLoc[3], Color.Orange);
                     spriteBatch.DrawString(font, "Streak: " + streak, statsHUDLoc[4], Color.Cyan);
                     spriteBatch.DrawString(font, "High: " + highScore, statsHUDLoc[5],  Color.Purple);
+                    
+                    //Draw splash
+                    splashAnim[0].Draw(spriteBatch, Color.White, Animation.FLIP_NONE);
+                    splashAnim[1].Draw(spriteBatch, Color.White, Animation.FLIP_NONE);
+                    splashAnim[2].Draw(spriteBatch, Color.White, Animation.FLIP_NONE);
+
                     if (false)
                     {
                         spriteBatch.Draw(blankImg, bucketInRec[2], Color.Magenta);
