@@ -244,7 +244,7 @@ namespace PASS2
             splashAnim[0] = new Animation(splashImg, 9, 5, 45, 45, 45, 2, 1, splashPos[0], 0.24f, false);
             splashAnim[1] = new Animation(splashImg, 9, 5, 45, 45, 45, 2, 1, splashPos[1], 0.48f, false);
             splashAnim[2] = new Animation(splashImg, 9, 5, 45, 45, 45, 2, 1, splashPos[2], 0.64f, false);
-            
+             
             Console.WriteLine("loaded :)");
             base.Initialize();
         }
